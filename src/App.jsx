@@ -25,7 +25,7 @@ function App() {
     song.song_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // console.log(filteredSongs);
+  // console.log(filteredSongs);//filtered songs will be displayed
 
   return (
     <Router>
