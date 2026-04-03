@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Form } from 'react-bootstrap';
+import './addsong.css';
 
 const AddSong = ({ addSong }) => {
   const navigate = useNavigate();
 
-  // State for the form data
   const [songName, setSongName] = useState("");
   const [artist, setArtist] = useState("");
   const [movieName, setMovieName] = useState("");
+  const [music, setMusic] = useState("");
   const [songFile, setSongFile] = useState(null);
   const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
-  // Handle file change for song
   const handleSongFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -20,95 +20,166 @@ const AddSong = ({ addSong }) => {
     }
   };
 
-  // Handle file change for image
   const handleImageFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
     }
   };
 
-  // Handle form submission
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    // Process song and image files (creating URLs for now)
-    const songUrl = URL.createObjectURL(songFile); // Temporary URL for the song file
-    const imageUrl = URL.createObjectURL(imageFile); // Temporary URL for the image file
+    const songUrl = URL.createObjectURL(songFile);
+    const imageUrl = URL.createObjectURL(imageFile);
 
-    // Create song object
     const newSong = {
-      id: Date.now(), // Use a unique ID based on timestamp
+      id: Date.now(),
       song_name: songName,
       artist,
       Movie_Name: movieName,
+      music,
       song_url: songUrl,
       image: imageUrl
     };
 
-    // Call addSong from App.jsx to update the song list
     addSong(newSong);
-
-    // Redirect back to Home page after adding the song
     navigate("/");
   };
 
   return (
-    <div className="container mt-5 pt-5 ">
-      <h2>Add New Song</h2>
-      <Form onSubmit={handleSubmit}>
-        <Form.Group className="mb-3">
-          <Form.Label>Song Name</Form.Label>
-          <Form.Control
-            type="text"
-            value={songName}
-            onChange={(e) => setSongName(e.target.value)}
-            required
-          />
-        </Form.Group>
-        
-        <Form.Group className="mb-3">
-          <Form.Label>Artist</Form.Label>
-          <Form.Control
-            type="text"
-            value={artist}
-            onChange={(e) => setArtist(e.target.value)}
-            required
-          />
-        </Form.Group>
+    <div className="add-song-container">
+      <div className="add-song-card">
+        <div className="add-song-header">
+          <i className="bi bi-music-note-beamed"></i>
+          <h2>Add New Song</h2>
+          <p>Fill in the details to add a new track to your library</p>
+        </div>
 
-        <Form.Group className="mb-3">
-          <Form.Label>Movie Name</Form.Label>
-          <Form.Control
-            type="text"
-            value={movieName}
-            onChange={(e) => setMovieName(e.target.value)}
-            required
-          />
-        </Form.Group>
+        <form onSubmit={handleSubmit} className="add-song-form">
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="songName">
+                <i className="bi bi-music-note"></i>
+                Song Name
+              </label>
+              <input
+                type="text"
+                id="songName"
+                value={songName}
+                onChange={(e) => setSongName(e.target.value)}
+                placeholder="Enter song name"
+                required
+              />
+            </div>
 
-        <Form.Group className="mb-3">
-          <Form.Label>Song File</Form.Label>
-          <Form.Control
-            type="file"
-            onChange={handleSongFileChange}
-            required
-          />
-        </Form.Group>
+            <div className="form-group">
+              <label htmlFor="artist">
+                <i className="bi bi-person"></i>
+                Artist
+              </label>
+              <input
+                type="text"
+                id="artist"
+                value={artist}
+                onChange={(e) => setArtist(e.target.value)}
+                placeholder="Enter artist name"
+                required
+              />
+            </div>
+          </div>
 
-        <Form.Group className="mb-3">
-          <Form.Label>Image File</Form.Label>
-          <Form.Control
-            type="file"
-            onChange={handleImageFileChange}
-            required
-          />
-        </Form.Group>
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="movieName">
+                <i className="bi bi-film"></i>
+                Album / Movie
+              </label>
+              <input
+                type="text"
+                id="movieName"
+                value={movieName}
+                onChange={(e) => setMovieName(e.target.value)}
+                placeholder="Enter album or movie name"
+                required
+              />
+            </div>
 
-        <Button variant="primary" type="submit">
-          Add Song
-        </Button>
-      </Form>
+            <div className="form-group">
+              <label htmlFor="music">
+                <i className="bi bi-disc"></i>
+                Music Director
+              </label>
+              <input
+                type="text"
+                id="music"
+                value={music}
+                onChange={(e) => setMusic(e.target.value)}
+                placeholder="Enter music director"
+              />
+            </div>
+          </div>
+
+          <div className="form-row file-row">
+            <div className="form-group file-group">
+              <label>
+                <i className="bi bi-file-music"></i>
+                Audio File
+              </label>
+              <div className="file-upload">
+                <input
+                  type="file"
+                  id="songFile"
+                  accept="audio/*"
+                  onChange={handleSongFileChange}
+                  required
+                />
+                <label htmlFor="songFile" className="file-label">
+                  <i className="bi bi-cloud-upload"></i>
+                  <span>{songFile ? songFile.name : 'Choose audio file'}</span>
+                </label>
+              </div>
+            </div>
+
+            <div className="form-group file-group">
+              <label>
+                <i className="bi bi-image"></i>
+                Cover Image
+              </label>
+              <div className="file-upload">
+                <input
+                  type="file"
+                  id="imageFile"
+                  accept="image/*"
+                  onChange={handleImageFileChange}
+                  required
+                />
+                <label htmlFor="imageFile" className="file-label">
+                  {imagePreview ? (
+                    <img src={imagePreview} alt="Preview" className="image-preview" />
+                  ) : (
+                    <>
+                      <i className="bi bi-cloud-upload"></i>
+                      <span>Choose cover image</span>
+                    </>
+                  )}
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div className="form-actions">
+            <button type="button" className="btn-cancel" onClick={() => navigate('/')}>
+              Cancel
+            </button>
+            <button type="submit" className="btn-submit">
+              <i className="bi bi-plus-lg"></i>
+              Add Song
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

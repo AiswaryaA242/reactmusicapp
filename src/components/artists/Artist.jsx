@@ -5,40 +5,51 @@ import './artist.css';
 const Artist = ({ data }) => {
   const [artists, setArtists] = useState([]);
   const navigate = useNavigate();
-  // console.log(data);
-  // console.log(data.map((song) => song.artist)); 
-
 
   useEffect(() => {
     if (data && data.length > 0) {
-      // Get unique artists from the data
-      const uniqueArtists = [...new Set(data.map((song) => song.artist))]; 
+      // Get unique artists with song count
+      const artistMap = new Map();
+      data.forEach((song) => {
+        if (artistMap.has(song.artist)) {
+          artistMap.set(song.artist, artistMap.get(song.artist) + 1);
+        } else {
+          artistMap.set(song.artist, 1);
+        }
+      });
+      const uniqueArtists = Array.from(artistMap, ([name, count]) => ({ name, count }));
       setArtists(uniqueArtists);
     }
   }, [data]);
-  
 
-  // Handle artist click to navigate to the artist details page
   const handleArtistClick = (artist) => {
-    navigate(`/artists/${artist}`);  // Navigate to the specific artist page
+    navigate(`/artists/${artist}`);
   };
-console.log(artists);
+
   return (
-    <div className="artist-container mt-5 pt-5">
+    <div className="artist-container">
       <h2>Artists</h2>
       <div className="artist-list">
         {artists.length > 0 ? (
           artists.map((artist, index) => (
             <div
               key={index}
-              className="artist-card p-4"
-              onClick={() => handleArtistClick(artist)}  // Navigate when clicked
+              className="artist-card"
+              onClick={() => handleArtistClick(artist.name)}
             >
-              <h3>{artist}</h3>
+              <div className="artist-avatar">
+                <i className="bi bi-person-fill"></i>
+              </div>
+              <h3>{artist.name}</h3>
+              <span className="artist-subtitle">
+                {artist.count} {artist.count === 1 ? 'song' : 'songs'}
+              </span>
             </div>
           ))
         ) : (
-          <p>No artists available.</p>
+          <p style={{ color: '#b3b3b3', textAlign: 'center', gridColumn: '1 / -1' }}>
+            No artists available.
+          </p>
         )}
       </div>
     </div>
@@ -46,5 +57,3 @@ console.log(artists);
 };
 
 export default Artist;
-
-
